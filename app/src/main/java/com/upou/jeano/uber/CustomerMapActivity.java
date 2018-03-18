@@ -315,14 +315,14 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                         Glide.with(getApplication()).load(map.get("profileImageUrl").toString()).into(mDriverProfileImage);
                     }
                     int ratingSum = 0;
-                    float ratingTotal = 0;
+                    float ratingCount = 0;
                     float ratingAvg = 0;
                     for (DataSnapshot child : dataSnapshot.child("rating").getChildren()) {
                         ratingSum = ratingSum + Integer.valueOf(child.getValue().toString());
-                        ratingTotal++;
+                        ratingCount++;
                     }
-                    if (ratingTotal != 0) {
-                        ratingAvg = ratingSum/ratingTotal;
+                    if (ratingCount != 0) {
+                        ratingAvg = ratingSum/ratingCount;
                         mRatingBar.setRating(ratingAvg);
                     }
                 }
