@@ -101,7 +101,6 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                         }
                         if (child.getKey().equals("rating")) {
                             mRatingBar.setRating(Integer.valueOf(child.getValue().toString()));
-
                         }
                         if (child.getKey().equals("destination")) {
                             rideLocation.setText(child.getValue().toString());
@@ -215,7 +214,9 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
         mMap.addMarker(new MarkerOptions().position(destinationLatLng).title("Destination"));
 
         if(polylines.size()>0) {
-            erasePolylines();
+            for(Polyline line : polylines) {
+                line.remove();
+            }
         }
 
         polylines = new ArrayList<>();
