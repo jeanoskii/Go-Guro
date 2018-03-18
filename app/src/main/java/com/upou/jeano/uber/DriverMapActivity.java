@@ -68,14 +68,12 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     private Button mLogout, mSettings, mRideStatus, mHistory;
     private int status = 0;
     private String customerId = "", destination;
-    private LatLng destinationLatLng;
+    private LatLng destinationLatLng, pickupLatLng;
     private FusedLocationProviderClient mFusedLocationClient;
     private Boolean isLoggingOut = false;
     private LinearLayout mCustomerInfo;
     private ImageView mCustomerProfileImage;
     private TextView mCustomerName, mCustomerPhone, mCustomerDestination;
-    private List<Polyline> polylines;
-    private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,9 +171,20 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         map.put("driver", userId);
         map.put("customer", customerId);
         map.put("rating", 0);
+        map.put("timestamp", getCurrentTimestamp());
+        map.put("destination", destination);
+        map.put("location/from/lat", pickupLatLng.latitude);
+        map.put("location/from/lng", pickupLatLng.longitude);
+        map.put("location/to/lat", destinationLatLng.latitude);
+        map.put("location/to/lng", destinationLatLng.longitude);
 
         historyRef.child(requestId).updateChildren(map);
 
+    }
+
+    private Long getCurrentTimestamp() {
+        Long timestamp = System.currentTimeMillis() / 1000;
+        return timestamp;
     }
 
     private void getAssignedCustomer() {
@@ -280,7 +289,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                         locationLng = Double.parseDouble(map.get(1).toString());
                     }
 
-                    LatLng pickupLatLng = new LatLng(locationLat, locationLng);
+                    pickupLatLng = new LatLng(locationLat, locationLng);
 
                     pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLatLng).title("Pickup Location").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_pickup)));
                     getRouteToMarker(pickupLatLng);
@@ -497,6 +506,8 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         }
     }
 
+    private List<Polyline> polylines;
+    private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
     @Override
     public void onRoutingFailure(RouteException e) {
         if(e != null) {
