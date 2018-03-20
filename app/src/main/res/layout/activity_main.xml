@@ -7,15 +7,36 @@
     tools:context="com.upou.jeano.uber.MainActivity"
     android:orientation="vertical">
 
-    <Button
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="I'm a Driver"
-        android:id="@+id/driver"/>
-    <Button
+        android:src="@mipmap/ic_launcher_background"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="I'm a Customer"
-        android:id="@+id/customer"/>
+        android:text="@string/app_name"
+        android:textSize="32sp"
+        android:textAlignment="center"
+        android:layout_marginBottom="20dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="I Am a Tutor"
+            android:id="@+id/driver"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="I Need a Tutor"
+            android:id="@+id/customer"/>
+    </LinearLayout>
 
 </LinearLayout>
