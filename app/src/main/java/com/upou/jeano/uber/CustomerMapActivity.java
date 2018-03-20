@@ -115,40 +115,6 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
                 if (isDriverRequested) {
                     endRide();
-                    /*
-                    isDriverRequested = false;
-                    geoQuery.removeAllListeners();
-                    driverLocationRef.removeEventListener(driverLocationRefListener);
-
-                    if (isDriverFound != null) {
-                        DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundId).child("customerRequest");
-                        driverRef.setValue(null);
-                        driverFoundId = null;
-                    }
-
-                    isDriverFound = false;
-                    radius = 1;
-                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
-                    GeoFire geoFire = new GeoFire(ref);
-                    geoFire.removeLocation(userId, new GeoFire.CompletionListener() {
-                        @Override
-                        public void onComplete(String key, DatabaseError error) {
-                        }
-                    });
-
-                    if (pickupMarker != null) {
-                        pickupMarker.remove();
-                    }
-                    if (mDriverMarker != null) {
-                        mDriverMarker.remove();
-                    }
-                    mRequest.setText("Call Uber");
-                    mDriverInfo.setVisibility(View.GONE);
-                    mDriverName.setText("");
-                    mDriverPhone.setText("");
-                    mDriverCar.setText("");
-                    mDriverProfileImage.setImageResource(R.mipmap.ic_default_user);*/
                 } else {
                     isDriverRequested = true;
                     int selectId = mRadioGroup.getCheckedRadioButtonId();
