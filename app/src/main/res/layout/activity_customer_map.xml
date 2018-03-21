@@ -107,7 +107,13 @@
                     android:layout_gravity="center"
                     android:numStars="5"
                     android:stepSize="0.1"/>
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/sendMessage"
+                    android:text="Send Message"/>
             </LinearLayout>
+
         </LinearLayout>
         <LinearLayout
             android:background="@android:color/white"
