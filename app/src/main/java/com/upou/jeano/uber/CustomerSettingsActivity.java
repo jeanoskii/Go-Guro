@@ -91,52 +91,55 @@ public class CustomerSettingsActivity extends AppCompatActivity {
     private void saveUserInformation() {
         mName = mNameField.getText().toString();
         mPhone = mPhoneField.getText().toString();
-
-        Map userInfo = new HashMap();
-        userInfo.put("name", mName);
-        userInfo.put("phone", mPhone);
-        mCustomerDatabase.updateChildren(userInfo);
-
-        if (resultUri != null) {
-            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userId);
-            Bitmap bitmap = null;
-
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
-
-            byte[] data = baos.toByteArray();
-            UploadTask uploadTask = filePath.putBytes(data);
-
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-
-                    Map newImage = new HashMap();
-                    newImage.put("profileImageUrl", downloadUrl.toString());
-                    mCustomerDatabase.updateChildren(newImage);
-
-                    Toast.makeText(CustomerSettingsActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
-                    finish();
-                    return;
-                }
-            });
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(CustomerSettingsActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
-                    finish();
-                    return;
-                }
-            });
+        if (mName .equals("") || mPhone.equals("")) {
+            Toast.makeText(CustomerSettingsActivity.this, "Please fill out all fields.", Toast.LENGTH_SHORT).show();
         } else {
-            finish();
+            Map userInfo = new HashMap();
+            userInfo.put("name", mName);
+            userInfo.put("phone", mPhone);
+            mCustomerDatabase.updateChildren(userInfo);
+
+            if (resultUri != null) {
+                StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userId);
+                Bitmap bitmap = null;
+
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+
+                byte[] data = baos.toByteArray();
+                UploadTask uploadTask = filePath.putBytes(data);
+
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                        Map newImage = new HashMap();
+                        newImage.put("profileImageUrl", downloadUrl.toString());
+                        mCustomerDatabase.updateChildren(newImage);
+
+                        Toast.makeText(CustomerSettingsActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
+                    }
+                });
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(CustomerSettingsActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
+                    }
+                });
+            } else {
+                finish();
+            }
         }
     }
 

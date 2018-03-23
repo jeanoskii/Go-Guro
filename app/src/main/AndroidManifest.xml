@@ -22,7 +22,6 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -42,8 +41,8 @@
 
         <activity
             android:name=".DriverMapActivity"
-            android:label="@string/title_activity_driver_map" />
-        <activity android:name=".CustomerMapActivity" />
+            android:label="@string/title_activity_driver_map"/>
+        <activity android:name=".CustomerMapActivity"/>
         <activity android:name=".CustomerSettingsActivity" />
         <activity android:name=".DriverSettingsActivity" />
         <activity android:name=".HistoryActivity" />

@@ -97,62 +97,62 @@ public class DriverSettingsActivity extends AppCompatActivity {
         mName = mNameField.getText().toString();
         mPhone = mPhoneField.getText().toString();
         mCar = mCarField.getText().toString();
-
         int selectId = mRadioGroup.getCheckedRadioButtonId();
-        final RadioButton radioButton = (RadioButton) findViewById(selectId);
-        if(radioButton.getText() == null) {
-                return;
-        }
-
-        mService = radioButton.getText().toString();
-
-        Map userInfo = new HashMap();
-        userInfo.put("name", mName);
-        userInfo.put("phone", mPhone);
-        userInfo.put("car", mCar);
-        userInfo.put("service", mService);
-        mDriverDatabase.updateChildren(userInfo);
-
-        if (resultUri != null) {
-            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userId);
-            Bitmap bitmap = null;
-
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
-
-            byte[] data = baos.toByteArray();
-            UploadTask uploadTask = filePath.putBytes(data);
-
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-
-                    Map newImage = new HashMap();
-                    newImage.put("profileImageUrl", downloadUrl.toString());
-                    mDriverDatabase.updateChildren(newImage);
-
-                    Toast.makeText(DriverSettingsActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
-                    finish();
-                    return;
-                }
-            });
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(DriverSettingsActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
-                    finish();
-                    return;
-                }
-            });
+        if (selectId == -1 || mName .equals("") || mPhone.equals("") || mCar.equals("")) {
+            Toast.makeText(DriverSettingsActivity.this, "Please fill out all fields.", Toast.LENGTH_SHORT).show();
         } else {
-            finish();
+            final RadioButton radioButton = (RadioButton) findViewById(selectId);
+
+            mService = radioButton.getText().toString();
+
+            Map userInfo = new HashMap();
+            userInfo.put("name", mName);
+            userInfo.put("phone", mPhone);
+            userInfo.put("car", mCar);
+            userInfo.put("service", mService);
+            mDriverDatabase.updateChildren(userInfo);
+
+            if (resultUri != null) {
+                StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userId);
+                Bitmap bitmap = null;
+
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+
+                byte[] data = baos.toByteArray();
+                UploadTask uploadTask = filePath.putBytes(data);
+
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                        Map newImage = new HashMap();
+                        newImage.put("profileImageUrl", downloadUrl.toString());
+                        mDriverDatabase.updateChildren(newImage);
+
+                        Toast.makeText(DriverSettingsActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
+                    }
+                });
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(DriverSettingsActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
+                    }
+                });
+            } else {
+                finish();
+            }
         }
     }
 

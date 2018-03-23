@@ -515,4 +515,11 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     protected void onStop() {
         super.onStop();
     }
+
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
 }

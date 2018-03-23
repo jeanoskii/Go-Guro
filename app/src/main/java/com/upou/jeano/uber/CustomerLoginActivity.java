@@ -79,10 +79,10 @@ public class CustomerLoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()) {
                             Toast.makeText(CustomerLoginActivity.this, "Sign In Error", Toast.LENGTH_SHORT).show();
-                        } else {
+                        } else { /*
                             String user_id = mAuth.getCurrentUser().getUid();
                             DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(user_id);
-                            current_user_db.setValue(true);
+                            current_user_db.setValue(true); */
                         }
                     }
                 });
