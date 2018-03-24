@@ -69,13 +69,13 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     LocationRequest mLocationRequest;
     private Button mLogout, mSettings, mRideStatus, mHistory;
     private int status = 0;
-    private String customerId = "", destination, userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private String customerId = "", destination, topic, userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
     private LatLng destinationLatLng, pickupLatLng;
     private FusedLocationProviderClient mFusedLocationClient;
     private Boolean isLoggingOut = false;
     private LinearLayout mCustomerInfo;
     private ImageView mCustomerProfileImage;
-    private TextView mCustomerName, mCustomerPhone, mCustomerDestination;
+    private TextView mCustomerName, mCustomerPhone, mCustomerDestination, mCustomerTopic;
     private Switch mWorkingSwitch;
     private static Bundle bundle = new Bundle();
 
@@ -102,35 +102,11 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         mCustomerDestination = (TextView) findViewById(R.id.customerDestination);
         mCustomerName = (TextView) findViewById(R.id.customerName);
         mCustomerPhone = (TextView) findViewById(R.id.customerPhone);
+        mCustomerTopic = (TextView) findViewById(R.id.customerTopic);
         mLogout = (Button) findViewById(R.id.logout);
         mSettings = (Button) findViewById(R.id.settings);
         mHistory = (Button) findViewById(R.id.history);
         mWorkingSwitch = (Switch) findViewById(R.id.workingSwitch);
-        /*
-        DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("driversAvailable").child(userId);
-        DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("driversWorking").child(userId);
-        refAvailable.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
-                    mWorkingSwitch.setChecked(true);
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-        refWorking.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
-                    mWorkingSwitch.setChecked(true);
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });*/
         mWorkingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
@@ -234,6 +210,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         map.put("rating", 0);
         map.put("timestamp", getCurrentTimestamp());
         map.put("destination", destination);
+        map.put("topic", topic);
         map.put("location/from/lat", pickupLatLng.latitude);
         map.put("location/from/lng", pickupLatLng.longitude);
         map.put("location/to/lat", destinationLatLng.latitude);
@@ -292,6 +269,10 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                         destinationLng = Double.valueOf(map.get("destinationLng").toString());
                         destinationLatLng = new LatLng(destinationLat, destinationLng);
                     }
+                    if (map.get("topic") != null) {
+                        topic = map.get("topic").toString();
+                        mCustomerTopic.setText("Topic: " + topic);
+                    }
                 }
             }
 
@@ -320,10 +301,8 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                     }
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }

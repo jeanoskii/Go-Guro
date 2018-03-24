@@ -12,6 +12,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,6 +31,7 @@ import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.ActivityRecognitionApi;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
@@ -65,13 +68,14 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     private LatLng pickupLocation;
     private Boolean isDriverRequested = false;
     private Marker pickupMarker;
-    private String destination, requestService;
+    private String destination, requestService, topic;
     private LinearLayout mDriverInfo;
     private ImageView mDriverProfileImage;
     private TextView mDriverName, mDriverPhone, mDriverCar;
     private RadioGroup mRadioGroup;
     private LatLng destinationLatLng;
     private RatingBar mRatingBar;
+    private AutoCompleteTextView mTopic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +103,31 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         mRatingBar = (RatingBar) findViewById(R.id.ratingBar);
         mLogout = (Button) findViewById(R.id.logout);
         mSendMessage = (Button) findViewById(R.id.sendMessage);
+
+        mTopic = (AutoCompleteTextView) findViewById(R.id.topic);
+
+        mTopic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatabaseReference topicsRef = FirebaseDatabase.getInstance().getReference("Topics");
+                topicsRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        final List<String> topics = new ArrayList<String>();
+                        for (DataSnapshot topicSnapshot : dataSnapshot.getChildren()) {
+                            String topic = topicSnapshot.getKey();
+                            topics.add(topic);
+                        }
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(CustomerMapActivity.this, android.R.layout.simple_dropdown_item_1line, topics);
+                        mTopic.setAdapter(adapter);
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+            }
+        });
+
         mRequest = (Button) findViewById(R.id.request);
         mSettings = (Button) findViewById(R.id.settings);
         mHistory = (Button) findViewById(R.id.history);
@@ -116,7 +145,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
                 intent.setData(Uri.parse("smsto:" + mDriverPhone.getText()));
-                intent.putExtra("sms_body", "Hi " + mDriverName.getText() + "! Can you help me with my lesson? ");
+                intent.putExtra("sms_body", "Hi " + mDriverName.getText() + "! Can you help me with my lesson in " + topic + "? ");
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 }
@@ -126,26 +155,24 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         mRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (isDriverRequested) {
                     endRide();
                 } else {
                     isDriverRequested = true;
                     int selectId = mRadioGroup.getCheckedRadioButtonId();
                     final RadioButton radioButton = (RadioButton) findViewById(selectId);
-                    if(radioButton.getText() == null) {
+                    requestService = radioButton.getText().toString();
+                    topic = mTopic.getText().toString();
+                    if(requestService.equals("") || topic.equals("")) {
+                        Toast.makeText(getApplicationContext(), "Please select service/topic.", Toast.LENGTH_LONG).show();
                         return;
                     }
-
-                    requestService = radioButton.getText().toString();
-
                     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
                     GeoFire geoFire = new GeoFire(ref);
                     geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
                         @Override
                         public void onComplete(String key, DatabaseError error) {
-
                         }
                     });
 
@@ -231,6 +258,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                                     map.put("destination", destination);
                                     map.put("destinationLat", destinationLatLng.latitude);
                                     map.put("destinationLng", destinationLatLng.longitude);
+                                    map.put("topic", topic);
                                     driverRef.updateChildren(map);
 
                                     getDriverLocation();
@@ -392,13 +420,21 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
     private void endRide() {
         isDriverRequested = false;
-        geoQuery.removeAllListeners();
-        driverLocationRef.removeEventListener(driverLocationRefListener);
-        driverHasEndedRef.removeEventListener(driverHasEndedRefListener);
+        if (geoQuery != null) {
+            geoQuery.removeAllListeners();
+        }
+        if (driverLocationRef != null) {
+            driverLocationRef.removeEventListener(driverLocationRefListener);
+        }
+        if (driverHasEndedRef != null) {
+            driverHasEndedRef.removeEventListener(driverHasEndedRefListener);
+        }
 
         if (driverFoundId != null) {
             DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundId).child("customerRequest");
             driverRef.removeValue();
+            DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("driversWorking").child(driverFoundId);
+            refWorking.removeValue();
             driverFoundId = null;
         }
 
@@ -504,7 +540,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mapFragment.getMapAsync(this);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Please provide the permission", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Please provide the permission.", Toast.LENGTH_LONG).show();
                 }
                 break;
             }
