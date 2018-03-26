@@ -60,7 +60,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:orientation="horizontal">
-
             <ImageView
                 android:layout_width="100sp"
                 android:layout_height="100sp"
@@ -68,7 +67,6 @@
                 android:src="@mipmap/ic_default_user"
                 android:padding="20sp"
                 />
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -104,12 +102,34 @@
                     />
             </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            android:id="@+id/acceptDecline">
+            <Button
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:id="@+id/accept"
+                android:text="Accept"/>
+            <Button
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:id="@+id/decline"
+                android:text="Decline"/>
+        </LinearLayout>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:id="@+id/rideStatus"
-            android:text="Pick Up Customer"/>
+            android:text="Pick Up Customer"
+            android:visibility="gone"/>
     </LinearLayout>
 
 </FrameLayout>
