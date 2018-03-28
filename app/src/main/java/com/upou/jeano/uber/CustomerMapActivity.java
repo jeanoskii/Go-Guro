@@ -157,6 +157,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             @Override
             public void onClick(View view) {
                 if (isDriverRequested) {
+                    getHasRideEnded();
                     endRide();
                 } else {
                     isDriverRequested = true;
@@ -223,8 +224,10 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
     private int radius = 1;
     private boolean isDriverFound = false;
+    //private String hasDriverAccepted; // 0 = not yet accepted/declined, 1 = accepted, 2 = declined
+    private List<String> declinedDriverIds = new ArrayList<>();
     private String driverFoundId;
-
+    private DatabaseReference driverRef;
     GeoQuery geoQuery;
 
     private void getClosestDriver() {
@@ -232,21 +235,31 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         GeoFire geoFire = new GeoFire(driverLocation);
         geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude, pickupLocation.longitude), radius);
         geoQuery.removeAllListeners();
-
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
                 if (!isDriverFound && isDriverRequested) {
-                    DatabaseReference mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(key);
-                    mCustomerDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                    if (declinedDriverIds.contains(key))
+                    {
+                        return;
+                    }
+                    driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(key);
+                    driverRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                                driverFoundId = dataSnapshot.getKey();
                                 if (isDriverFound) {
                                     return;
-                                }
-                                driverFoundId = dataSnapshot.getKey();
-                                DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundId).child("requests").child(userId);
+                                } /*
+                                if (declinedDriverIds.contains(driverFoundId)) {
+                                    driverFoundId = null;
+                                    radius++;
+                                    getClosestDriver();
+                                    return;
+                                } */
+                                isDriverFound = true;
+                                driverRef = driverRef.child("requests").child(userId);
                                 HashMap map = new HashMap();
                                 map.put("destination", destination);
                                 map.put("destinationLat", destinationLatLng.latitude);
@@ -254,7 +267,43 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                                 map.put("topic", topic);
                                 map.put("isAccepted", "0");
                                 driverRef.updateChildren(map);
-                                getAcceptedDriver();
+                                mRequest.setText("Looking for Driver Location...");
+                                getDriverResponse();
+                                /*
+                                driverFoundId = dataSnapshot.getKey();
+                                final DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundId).child("requests").child(userId);
+                                driverRef.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            hasDriverAccepted = dataSnapshot.child("isAccepted").getValue().toString();
+                                            if (hasDriverAccepted.equals("0")) {
+
+                                            } else if (hasDriverAccepted.equals("false")) {
+
+                                            } else { //driver accepted
+                                                getDriverLocation();
+                                                getDriverInfo();
+                                                getHasRideEnded();
+                                                mRequest.setText("Looking for Driver Location...");
+                                            }
+                                        } else {
+                                            HashMap map = new HashMap();
+                                            map.put("destination", destination);
+                                            map.put("destinationLat", destinationLatLng.latitude);
+                                            map.put("destinationLng", destinationLatLng.longitude);
+                                            map.put("topic", topic);
+                                            map.put("isAccepted", "0");
+                                            driverRef.updateChildren(map);
+                                            isDriverFound = true;
+                                            //getAcceptedDriver();
+                                        }
+                                    }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                    }
+                                });
+                                */
                             }
                         }
                         @Override
@@ -271,7 +320,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             }
             @Override
             public void onGeoQueryReady() {
-                if (!isDriverFound) {
+                if (!isDriverFound /*|| hasDriverAccepted.equals("false")*/) {
                     radius++;
                     getClosestDriver();
                 }
@@ -282,26 +331,32 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         });
     }
 
-    private void getAcceptedDriver() {
-        DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundId).child("requests").child(userId).child("isAccepted");
-        driverRef.addValueEventListener(new ValueEventListener() {
+
+    private void getDriverResponse() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundId).child("requests").child(userId).child("isAccepted");
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    if (dataSnapshot.getValue().toString().equals("0")) {
+                    String driverResponse = dataSnapshot.getValue().toString();
+                    if (driverResponse.equals("0")) {
                         //not yet accepted/declined or record deleted
+                        //getDriverResponse();
                         return;
                     }
-                    if ((boolean) dataSnapshot.getValue() == true) {
+                    if (driverResponse.equals("true")) {
                         //driver has accepted
-                        isDriverFound = true;
                         getDriverLocation();
                         getDriverInfo();
                         getHasRideEnded();
                         mRequest.setText("Looking for Driver Location...");
                     } else {
                         //driver has declined
+                        isDriverFound = false;
+                        declinedDriverIds.add(driverFoundId);
                         driverFoundId = null;
+                        radius++;
+                        getClosestDriver();
                     }
                 }
             }
@@ -310,6 +365,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             }
         });
     }
+
 
     private void getDriverInfo() {
         mDriverInfo.setVisibility(View.VISIBLE);
@@ -468,15 +524,21 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     }
 
     private void endRide() {
-        if (geoQuery != null) {
+        //if (geoQuery != null) {
             geoQuery.removeAllListeners();
-        }
+        //}
         if (driverLocationRef != null) {
             driverLocationRef.removeEventListener(driverLocationRefListener);
         }
         if (driverHasEndedRef != null) {
             driverHasEndedRef.removeEventListener(driverHasEndedRefListener);
             driverHasEndedRef.removeValue();
+        }
+        if (!declinedDriverIds.isEmpty()) {
+            for (int i = 0; i < declinedDriverIds.size(); i++) {
+                DatabaseReference declinedDriversRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(declinedDriverIds.get(i)).child("requests").child(userId);
+                declinedDriversRef.removeValue();
+            }
         }
         /*
         if (driverRequestEndedRef != null) {
@@ -490,7 +552,12 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         */
         if (driverFoundId != null) {
             DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("driversWorking").child(driverFoundId);
-            refWorking.removeValue();
+            GeoFire geoFire = new GeoFire(refWorking);
+            geoFire.removeLocation(driverFoundId, new GeoFire.CompletionListener() {
+                @Override
+                public void onComplete(String key, DatabaseError error) {
+                }
+            });
             driverFoundId = null;
         }
         isDriverRequested = false;
