@@ -242,22 +242,19 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
-                                Map<String, Object> driverMap = (Map<String, Object>) dataSnapshot.getValue();
                                 if (isDriverFound) {
                                     return;
                                 }
-                                if (driverMap.get("service").equals(requestService)) {
-                                    driverFoundId = dataSnapshot.getKey();
-                                    DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundId).child("requests").child(userId);
-                                    HashMap map = new HashMap();
-                                    map.put("destination", destination);
-                                    map.put("destinationLat", destinationLatLng.latitude);
-                                    map.put("destinationLng", destinationLatLng.longitude);
-                                    map.put("topic", topic);
-                                    map.put("isAccepted", "0");
-                                    driverRef.updateChildren(map);
-                                    getAcceptedDriver();
-                                }
+                                driverFoundId = dataSnapshot.getKey();
+                                DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundId).child("requests").child(userId);
+                                HashMap map = new HashMap();
+                                map.put("destination", destination);
+                                map.put("destinationLat", destinationLatLng.latitude);
+                                map.put("destinationLng", destinationLatLng.longitude);
+                                map.put("topic", topic);
+                                map.put("isAccepted", "0");
+                                driverRef.updateChildren(map);
+                                getAcceptedDriver();
                             }
                         }
                         @Override
@@ -293,21 +290,18 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                 if (dataSnapshot.exists()) {
                     if (dataSnapshot.getValue().toString().equals("0")) {
                         //not yet accepted/declined or record deleted
-                        isDriverFound = false;
                         return;
-                    } else {
+                    }
+                    if ((boolean) dataSnapshot.getValue() == true) {
                         //driver has accepted
-                        if ((boolean) dataSnapshot.getValue() == true) {
-                            isDriverFound = true;
-                            getDriverLocation();
-                            getDriverInfo();
-                            getHasRideEnded();
-                            mRequest.setText("Looking for Driver Location...");
-                        } else {
-                            isDriverFound = false;
-                            driverFoundId = null;
-                            return;
-                        }
+                        isDriverFound = true;
+                        getDriverLocation();
+                        getDriverInfo();
+                        getHasRideEnded();
+                        mRequest.setText("Looking for Driver Location...");
+                    } else {
+                        //driver has declined
+                        driverFoundId = null;
                     }
                 }
             }
@@ -474,7 +468,6 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     }
 
     private void endRide() {
-        isDriverRequested = false;
         if (geoQuery != null) {
             geoQuery.removeAllListeners();
         }
@@ -500,6 +493,8 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             refWorking.removeValue();
             driverFoundId = null;
         }
+        isDriverRequested = false;
+        isDriverFound = false;
         radius = 1;
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
         GeoFire geoFire = new GeoFire(ref);
@@ -534,7 +529,6 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(CustomerMapActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
         }
@@ -557,9 +551,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     public void onLocationChanged(Location location) {
         if (getApplicationContext() != null) {
             mLastLocation = location;
-
             LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         }

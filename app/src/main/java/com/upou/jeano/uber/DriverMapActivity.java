@@ -149,6 +149,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                 map.put("isAccepted", false);
                 ref.updateChildren(map);
                 mCustomerInfo.setVisibility(View.GONE);
+                mWorkingSwitch.setEnabled(true);
             }
         });
 
@@ -275,6 +276,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         if (child.child("isAccepted").getValue().equals("0")) {
                             mCustomerInfo.setVisibility(View.VISIBLE);
+                            mWorkingSwitch.setEnabled(false);
                             status = 1;
                             customerId = child.getKey();
                             getAssignedCustomerPickupLocation();
@@ -423,6 +425,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
             assignedCustomerPickupLocationRef.removeEventListener(assignedCustomerPickupLocationRefListener);
         }
         mCustomerInfo.setVisibility(View.GONE);
+        mWorkingSwitch.setEnabled(true);
         mCustomerName.setText("");
         mCustomerPhone.setText("");
         mCustomerProfileImage.setImageResource(R.mipmap.ic_default_user);
