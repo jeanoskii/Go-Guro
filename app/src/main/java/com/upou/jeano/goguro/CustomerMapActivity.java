@@ -336,7 +336,6 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     String driverResponse = dataSnapshot.getValue().toString();
                     if (driverResponse.equals("0")) {
                         //not yet accepted/declined or record deleted
-                        //getDriverResponse();
                         return;
                     }
                     if (driverResponse.equals("true")) {

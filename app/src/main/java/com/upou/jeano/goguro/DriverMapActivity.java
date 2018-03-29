@@ -15,9 +15,9 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.directions.route.AbstractRouting;
@@ -69,10 +69,10 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     private LatLng /*destinationLatLng,*/ pickupLatLng;
     private FusedLocationProviderClient mFusedLocationClient;
     private boolean isLoggingOut = false, hasDriverCompleteInfo;
-    private LinearLayout mCustomerInfo, mAcceptDecline;
+    private LinearLayout mCustomerInfo, mAcceptDecline, mButtons;
     private ImageView mCustomerProfileImage;
     private TextView mCustomerName, mCustomerPhone, mCustomerDestination, mCustomerTopic;
-    private Switch mWorkingSwitch;
+    private ToggleButton mWorkingToggle;
     private static Bundle bundle = new Bundle();
 
     @Override
@@ -94,6 +94,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         }
 
         mCustomerInfo = (LinearLayout) findViewById(R.id.customerInfo);
+        mButtons = (LinearLayout) findViewById(R.id.buttons);
         mCustomerProfileImage = (ImageView) findViewById(R.id.customerProfileImage);
         //mCustomerDestination = (TextView) findViewById(R.id.customerDestination);
         mCustomerName = (TextView) findViewById(R.id.customerName);
@@ -102,12 +103,12 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         mLogout = (Button) findViewById(R.id.logout);
         mSettings = (Button) findViewById(R.id.settings);
         mHistory = (Button) findViewById(R.id.history);
-        mWorkingSwitch = (Switch) findViewById(R.id.workingSwitch);
+        mWorkingToggle = (ToggleButton) findViewById(R.id.workingSwitch);
         mAccept = (Button) findViewById(R.id.accept);
         mDecline = (Button) findViewById(R.id.decline);
         mAcceptDecline = (LinearLayout) findViewById(R.id.acceptDecline);
         checkDriverInfo();
-        mWorkingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mWorkingToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (hasDriverCompleteInfo) {
@@ -145,7 +146,8 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                 map.put("isAccepted", false);
                 ref.updateChildren(map);
                 mCustomerInfo.setVisibility(View.GONE);
-                mWorkingSwitch.setEnabled(true);
+                enableActionButtons(true);
+                //mWorkingToggle.setEnabled(true);
             }
         });
 
@@ -214,12 +216,12 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                             hasDriverCompleteInfo = true;
                         } else {
                             Toast.makeText(getApplicationContext(), "Please complete driver details form using the Settings button at top.", Toast.LENGTH_LONG).show();
-                            mWorkingSwitch.setChecked(false);
+                            mWorkingToggle.setChecked(false);
                             hasDriverCompleteInfo = false;
                         }
                     } else {
                         Toast.makeText(getApplicationContext(), "Please complete driver details form using the Settings button at top.", Toast.LENGTH_LONG).show();
-                        mWorkingSwitch.setChecked(false);
+                        mWorkingToggle.setChecked(false);
                         hasDriverCompleteInfo = false;
                     }
                 }
@@ -272,7 +274,9 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         if (child.child("isAccepted").getValue().equals("0")) {
                             mCustomerInfo.setVisibility(View.VISIBLE);
-                            mWorkingSwitch.setEnabled(false);
+                            enableActionButtons(false);
+                            //mWorkingToggle.setEnabled(false);
+
                             status = 1;
                             customerId = child.getKey();
                             getAssignedCustomerPickupLocation();
@@ -387,6 +391,13 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         });
     }
 
+    private void enableActionButtons(boolean value) {
+        mLogout.setEnabled(value);
+        mHistory.setEnabled(value);
+        mSettings.setEnabled(value);
+        mWorkingToggle.setEnabled(value);
+    }
+
     private void getRouteToMarker(LatLng pickupLatLng) {
         Routing routing = new Routing.Builder()
                 .travelMode(AbstractRouting.TravelMode.DRIVING)
@@ -421,7 +432,8 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
             assignedCustomerPickupLocationRef.removeEventListener(assignedCustomerPickupLocationRefListener);
         }
         mCustomerInfo.setVisibility(View.GONE);
-        mWorkingSwitch.setEnabled(true);
+        enableActionButtons(true);
+        //mWorkingToggle.setEnabled(true);
         mCustomerName.setText("");
         mCustomerPhone.setText("");
         mCustomerProfileImage.setImageResource(R.mipmap.ic_default_user);
