@@ -1,4 +1,4 @@
-package com.upou.jeano.uber;
+package com.upou.jeano.goguro;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.upou.jeano.uber", appContext.getPackageName());
+        assertEquals("com.upou.jeano.goguro", appContext.getPackageName());
     }
 }

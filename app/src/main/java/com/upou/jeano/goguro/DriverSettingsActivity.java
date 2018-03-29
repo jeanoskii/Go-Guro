@@ -1,4 +1,4 @@
-package com.upou.jeano.uber;
+package com.upou.jeano.goguro;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,7 +29,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;

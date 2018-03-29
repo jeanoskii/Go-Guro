@@ -1,4 +1,4 @@
-package com.upou.jeano.uber;
+package com.upou.jeano.goguro;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,8 +11,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.upou.jeano.uber.HistoryRecyclerView.HistoryAdapter;
-import com.upou.jeano.uber.HistoryRecyclerView.HistoryObject;
+import com.upou.jeano.goguro.HistoryRecyclerView.HistoryAdapter;
+import com.upou.jeano.goguro.HistoryRecyclerView.HistoryObject;
 
 import android.text.format.DateFormat;
 import java.util.ArrayList;

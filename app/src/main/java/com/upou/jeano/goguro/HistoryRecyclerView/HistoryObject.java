@@ -1,4 +1,4 @@
-package com.upou.jeano.uber.HistoryRecyclerView;
+package com.upou.jeano.goguro.HistoryRecyclerView;
 
 /**
  * Created by Jeano on 16/03/2018.

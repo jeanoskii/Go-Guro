@@ -1,16 +1,13 @@
-package com.upou.jeano.uber;
+package com.upou.jeano.goguro;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.media.Rating;
 import android.net.Uri;
-import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -32,7 +29,6 @@ import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.ActivityRecognitionApi;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
@@ -180,7 +176,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                     pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup Here").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_pickup)));
 
-                    mRequest.setText("Getting your Driver...");
+                    mRequest.setText("Getting your Tutor...");
 
                     getClosestDriver();
                 }
@@ -267,7 +263,6 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                                 map.put("topic", topic);
                                 map.put("isAccepted", "0");
                                 driverRef.updateChildren(map);
-                                mRequest.setText("Looking for Driver Location...");
                                 getDriverResponse();
                                 /*
                                 driverFoundId = dataSnapshot.getKey();
@@ -346,10 +341,11 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     }
                     if (driverResponse.equals("true")) {
                         //driver has accepted
+                        mRequest.setEnabled(false);
                         getDriverLocation();
                         getDriverInfo();
                         getHasRideEnded();
-                        mRequest.setText("Looking for Driver Location...");
+                        mRequest.setEnabled(true);
                     } else {
                         //driver has declined
                         isDriverFound = false;
@@ -421,7 +417,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     List<Object> map = (List<Object>) dataSnapshot.getValue();
                     double locationLat = 0;
                     double locationLng = 0;
-                    mRequest.setText("Driver found!");
+                    mRequest.setText("Tutor found!");
 
                     if (map.get(0) != null) {
                         locationLat = Double.parseDouble(map.get(0).toString());
@@ -447,9 +443,9 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     float distance = loc1.distanceTo(loc2);
 
                     if (distance < 100) {
-                        mRequest.setText("Driver's Here!");
+                        mRequest.setText("Tutor's Here!");
                     } else {
-                        mRequest.setText("Driver Found: " + String.valueOf(distance));
+                        mRequest.setText("Tutor Found: " + String.valueOf(distance));
                     }
 
                     mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("Your Driver").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car)));

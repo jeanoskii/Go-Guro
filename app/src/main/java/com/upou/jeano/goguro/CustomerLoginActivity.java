@@ -1,4 +1,4 @@
-package com.upou.jeano.uber;
+package com.upou.jeano.goguro;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;

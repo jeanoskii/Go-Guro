@@ -1,13 +1,12 @@
-package com.upou.jeano.uber.HistoryRecyclerView;
+package com.upou.jeano.goguro.HistoryRecyclerView;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.upou.jeano.uber.R;
+import com.upou.jeano.goguro.R;
 
 import java.util.List;
 

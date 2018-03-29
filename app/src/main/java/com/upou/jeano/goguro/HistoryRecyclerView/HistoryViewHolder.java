@@ -1,4 +1,4 @@
-package com.upou.jeano.uber.HistoryRecyclerView;
+package com.upou.jeano.goguro.HistoryRecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,8 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.upou.jeano.uber.HistorySingleActivity;
-import com.upou.jeano.uber.R;
+import com.upou.jeano.goguro.HistorySingleActivity;
+import com.upou.jeano.goguro.R;
 
 /**
  * Created by Jeano on 16/03/2018.

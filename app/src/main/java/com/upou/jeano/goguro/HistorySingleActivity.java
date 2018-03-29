@@ -1,6 +1,5 @@
-package com.upou.jeano.uber;
+package com.upou.jeano.goguro;
 
-import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;

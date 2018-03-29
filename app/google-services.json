@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:638648271363:android:59a92e75e42edb51",
         "android_client_info": {
-          "package_name": "com.upou.jeano.uber"
+          "package_name": "com.upou.jeano.goguro"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "638648271363-8it8e78dhef9l1e5mioh5nkh3dfsssbo.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.upou.jeano.uber",
+            "package_name": "com.upou.jeano.goguro",
             "certificate_hash": "b912008efc31807ad77aa76d0d7f69149d549947"
           }
         },
