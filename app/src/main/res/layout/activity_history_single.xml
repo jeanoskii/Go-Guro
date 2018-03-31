@@ -7,73 +7,50 @@
     android:layout_height="match_parent"
     tools:context="com.upou.jeano.goguro.HistorySingleActivity"
     android:orientation="vertical">
-
-    <fragment
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:id="@+id/map"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20sp"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="From - To"
-            android:layout_marginBottom="20sp"
-            android:id="@+id/rideLocation"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Distance"
-            android:layout_marginBottom="20sp"
-            android:id="@+id/rideDistance"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Date"
-            android:layout_marginBottom="20sp"
-            android:id="@+id/rideDate"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:layout_margin="10dp">
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:id="@+id/userImage"
-            android:src="@mipmap/ic_default_user"/>
-        <LinearLayout
+            android:src="@mipmap/ic_default_user"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:layout_marginBottom="20dp"
+            android:id="@+id/date"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:layout_marginBottom="20dp"
+            android:id="@+id/userName"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Phone"
+            android:layout_marginBottom="20dp"
+            android:id="@+id/userPhone"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Topic"
+            android:id="@+id/topic"/>
+        <RatingBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20sp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Name"
-                android:layout_marginBottom="20sp"
-                android:id="@+id/userName"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Phone"
-                android:layout_marginBottom="20sp"
-                android:id="@+id/userPhone"/>
-        </LinearLayout>
+            android:id="@+id/ratingBar"
+            android:layout_gravity="center"
+            android:numStars="5"
+            android:stepSize="1"
+            android:visibility="gone"
+            android:layout_marginTop="20dp"
+            android:progressTint="@color/colorPrimary"/>
     </LinearLayout>
-    <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ratingBar"
-        android:layout_gravity="center"
-        android:numStars="5"
-        android:stepSize="1"
-        android:visibility="gone"/>
-
 </LinearLayout>

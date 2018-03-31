@@ -3,6 +3,7 @@ package com.upou.jeano.goguro;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -39,39 +40,38 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class HistorySingleActivity extends AppCompatActivity implements OnMapReadyCallback, RoutingListener{
-
+public class HistorySingleActivity extends AppCompatActivity {
     private String rideId, currentUserId, customerId, driverId, userDriverOrCustomer;
-    private TextView rideLocation, rideDistance, rideDate, userName, userPhone;
+    private TextView mDate, userName, userPhone, mTopic;
     private ImageView userImage;
-    private GoogleMap mMap;
-    private SupportMapFragment mMapFragment;
     private DatabaseReference historyRideInfoDb;
-    private LatLng pickupLatLng, destinationLatLng;
     private RatingBar mRatingBar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history_single);
-
-        polylines = new ArrayList<>();
-
         rideId = getIntent().getExtras().getString("rideId");
-
-        mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mMapFragment.getMapAsync(this);
-
-        rideLocation = (TextView) findViewById(R.id.rideLocation);
-        rideDate = (TextView) findViewById(R.id.rideDate);
+        mDate = (TextView) findViewById(R.id.date);
         userName = (TextView) findViewById(R.id.userName);
         userPhone = (TextView) findViewById(R.id.userPhone);
+        mTopic = (TextView) findViewById(R.id.topic);
         userImage = (ImageView) findViewById(R.id.userImage);
         mRatingBar = (RatingBar) findViewById(R.id.ratingBar);
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
         historyRideInfoDb = FirebaseDatabase.getInstance().getReference().child("History").child(rideId);
         getRideInformation();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void getRideInformation() {
@@ -80,48 +80,40 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
-                        if (child.getKey().equals("customer")) {
-                            customerId = child.getValue().toString();
-                            if (!customerId.equals(currentUserId)) {
-                                userDriverOrCustomer = "Drivers";
-                                getUserInformation("Customers", customerId);
-                            }
-                        }
-                        if (child.getKey().equals("driver")) {
-                            driverId = child.getValue().toString();
-                            if (!driverId.equals(currentUserId)) {
-                                userDriverOrCustomer = "Customers";
-                                getUserInformation("Drivers", driverId);
-                                displayCustomerRelatedObject();
-                            }
-                        }
-                        if (child.getKey().equals("timestamp")) {
-                            rideDate.setText(getDate(Long.valueOf(child.getValue().toString())));
-                        }
-                        if (child.getKey().equals("rating")) {
-                            mRatingBar.setRating(Integer.valueOf(child.getValue().toString()));
-                        }
-                        if (child.getKey().equals("destination")) {
-                            rideLocation.setText(child.getValue().toString());
-                        }
-                        if (child.getKey().equals("location")) {
-                            pickupLatLng = new LatLng((Double.valueOf(child.child("from").child("lat").getValue().toString())), (Double.valueOf(child.child("from").child("lng").getValue().toString())));
-                            destinationLatLng = new LatLng((Double.valueOf(child.child("to").child("lat").getValue().toString())), (Double.valueOf(child.child("to").child("lng").getValue().toString())));
-                            if (destinationLatLng != new LatLng(0,0)) {
-                                getRouteToMarker();
-                            }
+                        switch (child.getKey().toString()) {
+                            case "customer":
+                                customerId = child.getValue().toString();
+                                if (!customerId.equals(currentUserId)) {
+                                    userDriverOrCustomer = "Drivers";
+                                    getUserInformation("Customers", customerId);
+                                }
+                                break;
+                            case "driver":
+                                driverId = child.getValue().toString();
+                                if (!driverId.equals(currentUserId)) {
+                                    userDriverOrCustomer = "Customers";
+                                    getUserInformation("Drivers", driverId);
+                                    displayCustomerRelatedObject();
+                                }
+                                break;
+                            case "timestamp":
+                                mDate.setText(getDate(Long.valueOf(child.getValue().toString())));
+                                break;
+                            case "rating":
+                                mRatingBar.setRating(Integer.valueOf(child.getValue().toString()));
+                                break;
+                            case "topic":
+                                mTopic.setText(child.getValue().toString());
+                                break;
                         }
                     }
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
-
     private void displayCustomerRelatedObject() {
         mRatingBar.setVisibility(View.VISIBLE);
         mRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -133,7 +125,6 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
             }
         });
     }
-
     private void getUserInformation(String otherUserDriverOrCustomer, String otherUserId) {
         DatabaseReference mOtherUserDb = FirebaseDatabase.getInstance().getReference().child("Users").child(otherUserDriverOrCustomer).child(otherUserId);
         mOtherUserDb.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -152,98 +143,15 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                     }
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
-
     private String getDate(Long timestamp) {
         Calendar cal = Calendar.getInstance(Locale.getDefault());
         cal.setTimeInMillis(timestamp * 1000);
-        String date = DateFormat.format("MM-dd-yyyy hh:mm", cal).toString();
+        String date = DateFormat.format("MMMM dd, yyyy h:mmaa", cal).toString();
         return date;
-    }
-
-    private void getRouteToMarker() {
-        Routing routing = new Routing.Builder()
-                .travelMode(AbstractRouting.TravelMode.DRIVING)
-                .withListener(this)
-                .alternativeRoutes(false)
-                .waypoints(pickupLatLng, destinationLatLng)
-                .build();
-        routing.execute();
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-    }
-
-    private List<Polyline> polylines;
-    private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
-    @Override
-    public void onRoutingFailure(RouteException e) {
-        if(e != null) {
-            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }else {
-            Toast.makeText(this, "Something went wrong, try again", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onRoutingStart() {
-    }
-
-    @Override
-    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(pickupLatLng);
-        builder.include(destinationLatLng);
-        LatLngBounds bounds = builder.build();
-
-        int width = getResources().getDisplayMetrics().widthPixels;
-        int padding = (int) (width*0.2);
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-
-        mMap.animateCamera(cameraUpdate);
-        mMap.addMarker(new MarkerOptions().position(pickupLatLng).title("Pickup Location").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_pickup)));
-        mMap.addMarker(new MarkerOptions().position(destinationLatLng).title("Destination"));
-
-        if(polylines.size()>0) {
-            for(Polyline line : polylines) {
-                line.remove();
-            }
-        }
-
-        polylines = new ArrayList<>();
-        //add route(s) to the map.
-        for (int i = 0; i <route.size(); i++) {
-
-            //In case of more than 5 alternative routes
-            int colorIndex = i % COLORS.length;
-
-            PolylineOptions polyOptions = new PolylineOptions();
-            polyOptions.color(getResources().getColor(COLORS[colorIndex]));
-            polyOptions.width(10 + i * 3);
-            polyOptions.addAll(route.get(i).getPoints());
-            Polyline polyline = mMap.addPolyline(polyOptions);
-            polylines.add(polyline);
-
-            Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onRoutingCancelled() {
-    }
-
-    private void erasePolylines() {
-        for(Polyline line : polylines) {
-            line.remove();
-        }
-        polylines.clear();
     }
 }

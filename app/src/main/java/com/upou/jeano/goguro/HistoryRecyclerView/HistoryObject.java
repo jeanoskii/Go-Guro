@@ -7,10 +7,12 @@ package com.upou.jeano.goguro.HistoryRecyclerView;
 public class HistoryObject {
     private String rideId;
     private String time;
+    private String name;
 
-    public HistoryObject(String rideId, String time) {
+    public HistoryObject(String rideId, String time, String name) {
         this.rideId = rideId;
         this.time = time;
+        this.name = name;
     }
 
     public String getRideId() {
@@ -29,5 +31,12 @@ public class HistoryObject {
         this.time = time;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

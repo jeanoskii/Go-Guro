@@ -43,10 +43,14 @@
             android:name="com.upou.jeano.goguro.DriverMapActivity"
             android:label="@string/title_activity_driver_map"/>
         <activity android:name="com.upou.jeano.goguro.CustomerMapActivity"/>
-        <activity android:name="com.upou.jeano.goguro.CustomerSettingsActivity" />
-        <activity android:name="com.upou.jeano.goguro.DriverSettingsActivity" />
-        <activity android:name="com.upou.jeano.goguro.HistoryActivity" />
-        <activity android:name="com.upou.jeano.goguro.HistorySingleActivity"/>
+        <activity android:name="com.upou.jeano.goguro.CustomerSettingsActivity"
+            android:theme="@style/AppThemeActionBar"/>
+        <activity android:name="com.upou.jeano.goguro.DriverSettingsActivity"
+            android:theme="@style/AppThemeActionBar"/>
+        <activity android:name="com.upou.jeano.goguro.HistoryActivity"
+            android:theme="@style/AppThemeActionBar"/>
+        <activity android:name="com.upou.jeano.goguro.HistorySingleActivity"
+            android:theme="@style/AppThemeActionBar"/>
     </application>
 
 </manifest>

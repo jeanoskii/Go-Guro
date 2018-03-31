@@ -35,12 +35,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/confirm"
-        android:text="Confirm"/>
+        android:text="Confirm"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:textColor="#fff"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/back"
         android:text="Back"/>
-
-
 </LinearLayout>

@@ -31,39 +31,13 @@
         android:hint="Phone"
         android:layout_marginBottom="20sp"
         android:inputType="number"/>
-    <EditText
-        android:id="@+id/car"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:hint="Car"
-        android:layout_marginBottom="20sp"/>
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/radioGroup">
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="UberX"
-            android:id="@+id/uberX"/>
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="UberXL"
-            android:id="@+id/uberXL"/>
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Uber Black"
-            android:id="@+id/uberBlack"/>
-    </RadioGroup>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/confirm"
-        android:text="Confirm"/>
+        android:text="Confirm"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:textColor="#fff"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -15,15 +15,12 @@ import java.util.List;
  */
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
-
     private List<HistoryObject> itemList;
     private Context context;
-
     public HistoryAdapter(List<HistoryObject> itemList, Context context) {
         this.itemList = itemList;
         this.context = context;
     }
-
     @Override
     public HistoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_history, null, false);
@@ -32,13 +29,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
         HistoryViewHolder rcv = new HistoryViewHolder(layoutView);
         return rcv;
     }
-
     @Override
     public void onBindViewHolder(HistoryViewHolder holder, int position) {
         holder.rideId.setText(itemList.get(position).getRideId());
         holder.time.setText(itemList.get(position).getTime());
+        holder.name.setText(itemList.get(position).getName());
     }
-
     @Override
     public int getItemCount() {
         return this.itemList.size();
