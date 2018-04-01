@@ -36,7 +36,7 @@ import java.util.Map;
 public class CustomerSettingsActivity extends AppCompatActivity {
 
     private EditText mNameField, mPhoneField;
-    private Button mBack, mConfirm;
+    private Button mConfirm, mResetPassword;
     private FirebaseAuth mAuth;
     private DatabaseReference mCustomerDatabase;
     private String userId, mName, mPhone;
@@ -54,9 +54,8 @@ public class CustomerSettingsActivity extends AppCompatActivity {
         mNameField = (EditText) findViewById(R.id.name);
         mPhoneField = (EditText) findViewById(R.id.phone);
 
-        mBack = (Button) findViewById(R.id.back);
         mConfirm = (Button) findViewById(R.id.confirm);
-
+        mResetPassword = (Button) findViewById(R.id.resetPassword);
         mAuth = FirebaseAuth.getInstance();
         userId = mAuth.getCurrentUser().getUid();
         mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userId);
@@ -78,14 +77,15 @@ public class CustomerSettingsActivity extends AppCompatActivity {
                 saveUserInformation();
             }
         });
-
-        mBack.setOnClickListener(new View.OnClickListener() {
+        mResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-                return;
+                mAuth.sendPasswordResetEmail(mAuth.getCurrentUser().getEmail());
+                Toast.makeText(CustomerSettingsActivity.this, "Please view your email for the password reset instructions.", Toast.LENGTH_SHORT).show();
+                onBackPressed();
             }
         });
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -103,7 +103,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
     private void saveUserInformation() {
         mName = mNameField.getText().toString();
         mPhone = mPhoneField.getText().toString();
-        if (mName .equals("") || mPhone.equals("")) {
+        if (mName.equals("") || mPhone.equals("")) {
             Toast.makeText(CustomerSettingsActivity.this, "Please fill out all fields.", Toast.LENGTH_SHORT).show();
         } else {
             Map userInfo = new HashMap();

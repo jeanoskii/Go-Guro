@@ -104,6 +104,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         mWorkingToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                checkDriverInfo();
                 if (hasDriverCompleteInfo) {
                     if (isChecked) {
                         connectDriver();
@@ -113,6 +114,8 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                         deleteRequests();
                         mCustomerInfo.setVisibility(View.GONE);
                     }
+                } else {
+                    mWorkingToggle.setChecked(false);
                 }
             }
         });
@@ -195,7 +198,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     }
     private void checkDriverInfo() {
             DatabaseReference mDriverDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userId);
-            mDriverDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            mDriverDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
@@ -205,17 +208,15 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                                 hasDriverCompleteInfo = true;
                             } else {
                                 Toast.makeText(getApplicationContext(), "Please complete driver details form using the Settings button at top.", Toast.LENGTH_LONG).show();
-                                mWorkingToggle.setChecked(false);
                                 hasDriverCompleteInfo = false;
+
                             }
                         } else {
                             Toast.makeText(getApplicationContext(), "Please complete driver details form using the Settings button at top.", Toast.LENGTH_LONG).show();
-                            mWorkingToggle.setChecked(false);
                             hasDriverCompleteInfo = false;
                         }
                     } else {
                         Toast.makeText(getApplicationContext(), "Please complete driver details form using the Settings button at top.", Toast.LENGTH_LONG).show();
-                        mWorkingToggle.setChecked(false);
                         hasDriverCompleteInfo = false;
                     }
                 }

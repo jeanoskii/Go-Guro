@@ -25,8 +25,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.upou.jeano.goguro.DriverLoginActivity" />
-        <activity android:name="com.upou.jeano.goguro.CustomerLoginActivity" />
+        <activity android:name="com.upou.jeano.goguro.DriverLoginActivity"
+            android:theme="@style/AppThemeActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+            <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.upou.jeano.goguro.MainActivity"/>
+        </activity>
+        <activity android:name="com.upou.jeano.goguro.CustomerLoginActivity"
+            android:theme="@style/AppThemeActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.upou.jeano.goguro.MainActivity"/>
+        </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -44,9 +56,9 @@
             android:label="@string/title_activity_driver_map"/>
         <activity android:name="com.upou.jeano.goguro.CustomerMapActivity"/>
         <activity android:name="com.upou.jeano.goguro.CustomerSettingsActivity"
-            android:theme="@style/AppThemeActionBar"/>
+            android:theme="@style/AppThemeActionBarSettings"/>
         <activity android:name="com.upou.jeano.goguro.DriverSettingsActivity"
-            android:theme="@style/AppThemeActionBar"/>
+            android:theme="@style/AppThemeActionBarSettings"/>
         <activity android:name="com.upou.jeano.goguro.HistoryActivity"
             android:theme="@style/AppThemeActionBar"/>
         <activity android:name="com.upou.jeano.goguro.HistorySingleActivity"

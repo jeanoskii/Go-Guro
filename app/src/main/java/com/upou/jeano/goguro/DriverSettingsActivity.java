@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,7 +41,7 @@ import java.util.Map;
 public class DriverSettingsActivity extends AppCompatActivity {
 
     private EditText mNameField, mPhoneField;
-    private Button mBack, mConfirm;
+    private Button mConfirm, mResetPassword;
     private FirebaseAuth mAuth;
     private DatabaseReference mDriverDatabase;
     private String userId, mName, mPhone, mProfileImageUrl;
@@ -52,8 +55,8 @@ public class DriverSettingsActivity extends AppCompatActivity {
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
         mNameField = (EditText) findViewById(R.id.name);
         mPhoneField = (EditText) findViewById(R.id.phone);
-        mBack = (Button) findViewById(R.id.back);
         mConfirm = (Button) findViewById(R.id.confirm);
+        mResetPassword = (Button) findViewById(R.id.resetPassword);
         mAuth = FirebaseAuth.getInstance();
         userId = mAuth.getCurrentUser().getUid();
         mDriverDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userId);
@@ -72,12 +75,13 @@ public class DriverSettingsActivity extends AppCompatActivity {
                 saveUserInformation();
             }
         });
-        mBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-                return;
-            }
+        mResetPassword.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               mAuth.sendPasswordResetEmail(mAuth.getCurrentUser().getEmail());
+               Toast.makeText(DriverSettingsActivity.this, "Please view your email for the password reset instructions.", Toast.LENGTH_SHORT).show();
+               onBackPressed();
+           }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -97,44 +101,48 @@ public class DriverSettingsActivity extends AppCompatActivity {
     private void saveUserInformation() {
         mName = mNameField.getText().toString();
         mPhone = mPhoneField.getText().toString();
-        Map userInfo = new HashMap();
-        userInfo.put("name", mName);
-        userInfo.put("phone", mPhone);
-        mDriverDatabase.updateChildren(userInfo);
-        if (resultUri != null) {
-            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userId);
-            Bitmap bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
-            byte[] data = baos.toByteArray();
-            UploadTask uploadTask = filePath.putBytes(data);
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    Map newImage = new HashMap();
-                    newImage.put("profileImageUrl", downloadUrl.toString());
-                    mDriverDatabase.updateChildren(newImage);
-                    Toast.makeText(DriverSettingsActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
-                    finish();
-                    return;
-                }
-            });
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(DriverSettingsActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
-                    finish();
-                    return;
-                }
-            });
+        if (mName.equals("") || mPhone.equals("")) {
+            Toast.makeText(DriverSettingsActivity.this, "Please fill out all fields.", Toast.LENGTH_SHORT).show();
         } else {
-            finish();
+            Map userInfo = new HashMap();
+            userInfo.put("name", mName);
+            userInfo.put("phone", mPhone);
+            mDriverDatabase.updateChildren(userInfo);
+            if (resultUri != null) {
+                StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userId);
+                Bitmap bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+                byte[] data = baos.toByteArray();
+                UploadTask uploadTask = filePath.putBytes(data);
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        Map newImage = new HashMap();
+                        newImage.put("profileImageUrl", downloadUrl.toString());
+                        mDriverDatabase.updateChildren(newImage);
+                        Toast.makeText(DriverSettingsActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
+                    }
+                });
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(DriverSettingsActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
+                    }
+                });
+            } else {
+                finish();
+            }
         }
     }
     private void getUserInfo() {
