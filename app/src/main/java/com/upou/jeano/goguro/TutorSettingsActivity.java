@@ -4,25 +4,20 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.provider.ContactsContract;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,12 +33,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DriverSettingsActivity extends AppCompatActivity {
+public class TutorSettingsActivity extends AppCompatActivity {
 
     private EditText mNameField, mPhoneField;
     private Button mConfirm, mResetPassword;
     private FirebaseAuth mAuth;
-    private DatabaseReference mDriverDatabase;
+    private DatabaseReference mTutorDatabase;
     private String userId, mName, mPhone, mProfileImageUrl;
     private ImageView mProfileImage;
     private Uri resultUri;
@@ -51,15 +46,15 @@ public class DriverSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver_settings);
-        mProfileImage = (ImageView) findViewById(R.id.profileImage);
-        mNameField = (EditText) findViewById(R.id.name);
-        mPhoneField = (EditText) findViewById(R.id.phone);
-        mConfirm = (Button) findViewById(R.id.confirm);
-        mResetPassword = (Button) findViewById(R.id.resetPassword);
+        setContentView(R.layout.activity_tutor_settings);
+        mProfileImage = findViewById(R.id.profileImage);
+        mNameField = findViewById(R.id.name);
+        mPhoneField = findViewById(R.id.phone);
+        mConfirm = findViewById(R.id.confirm);
+        mResetPassword = findViewById(R.id.resetPassword);
         mAuth = FirebaseAuth.getInstance();
         userId = mAuth.getCurrentUser().getUid();
-        mDriverDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userId);
+        mTutorDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Tutors").child(userId);
         getUserInfo();
         mProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,7 +74,7 @@ public class DriverSettingsActivity extends AppCompatActivity {
            @Override
            public void onClick(View v) {
                mAuth.sendPasswordResetEmail(mAuth.getCurrentUser().getEmail());
-               Toast.makeText(DriverSettingsActivity.this, "Please view your email for the password reset instructions.", Toast.LENGTH_SHORT).show();
+               Toast.makeText(TutorSettingsActivity.this, "Please view your email for the password reset instructions.", Toast.LENGTH_SHORT).show();
                onBackPressed();
            }
         });
@@ -102,12 +97,12 @@ public class DriverSettingsActivity extends AppCompatActivity {
         mName = mNameField.getText().toString();
         mPhone = mPhoneField.getText().toString();
         if (mName.equals("") || mPhone.equals("")) {
-            Toast.makeText(DriverSettingsActivity.this, "Please fill out all fields.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(TutorSettingsActivity.this, "Please fill out all fields.", Toast.LENGTH_SHORT).show();
         } else {
             Map userInfo = new HashMap();
             userInfo.put("name", mName);
             userInfo.put("phone", mPhone);
-            mDriverDatabase.updateChildren(userInfo);
+            mTutorDatabase.updateChildren(userInfo);
             if (resultUri != null) {
                 StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userId);
                 Bitmap bitmap = null;
@@ -126,8 +121,8 @@ public class DriverSettingsActivity extends AppCompatActivity {
                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
                         Map newImage = new HashMap();
                         newImage.put("profileImageUrl", downloadUrl.toString());
-                        mDriverDatabase.updateChildren(newImage);
-                        Toast.makeText(DriverSettingsActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
+                        mTutorDatabase.updateChildren(newImage);
+                        Toast.makeText(TutorSettingsActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
                         finish();
                         return;
                     }
@@ -135,7 +130,7 @@ public class DriverSettingsActivity extends AppCompatActivity {
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(DriverSettingsActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TutorSettingsActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
                         finish();
                         return;
                     }
@@ -146,7 +141,7 @@ public class DriverSettingsActivity extends AppCompatActivity {
         }
     }
     private void getUserInfo() {
-        mDriverDatabase.addValueEventListener(new ValueEventListener() {
+        mTutorDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {

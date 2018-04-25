@@ -1,15 +1,15 @@
 package com.upou.jeano.goguro;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button mDriver, mCustomer;
+    private Button mTutor, mTutee;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,24 +18,24 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-        mDriver = (Button) findViewById(R.id.driver);
-        mCustomer = (Button) findViewById(R.id.customer);
+        mTutor = findViewById(R.id.tutor);
+        mTutee = findViewById(R.id.tutee);
 
         startService(new Intent(MainActivity.this, OnAppKilled.class));
-        mDriver.setOnClickListener(new View.OnClickListener() {
+        mTutor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, DriverLoginActivity.class);
+                Intent intent = new Intent(MainActivity.this, TutorLoginActivity.class);
                 startActivity(intent);
                 //finish();
                 return;
             }
         });
 
-        mCustomer.setOnClickListener(new View.OnClickListener() {
+        mTutee.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CustomerLoginActivity.class);
+                Intent intent = new Intent(MainActivity.this, TuteeLoginActivity.class);
                 startActivity(intent);
                 //finish();
                 return;

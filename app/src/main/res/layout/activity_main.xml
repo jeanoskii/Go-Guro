@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:text="I Want to Help"
             android:layout_gravity="center"
-            android:id="@+id/driver"
+            android:id="@+id/tutor"
             android:backgroundTint="@color/colorPrimary"
             android:textColor="@android:color/white"/>
         <Button
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:text="I Need Help"
             android:layout_gravity="center"
-            android:id="@+id/customer"
+            android:id="@+id/tutee"
             android:backgroundTint="@color/colorPrimaryDark"
             android:textColor="@android:color/white"
             android:layout_marginBottom="30sp"/>

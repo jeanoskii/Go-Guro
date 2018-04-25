@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "638648271363",
-    "firebase_url": "https://uber-abf8a.firebaseio.com",
-    "project_id": "uber-abf8a",
-    "storage_bucket": "uber-abf8a.appspot.com"
+    "project_number": "645170340017",
+    "firebase_url": "https://goguro-73781.firebaseio.com",
+    "project_id": "goguro-73781",
+    "storage_bucket": "goguro-73781.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:638648271363:android:59a92e75e42edb51",
+        "mobilesdk_app_id": "1:645170340017:android:5a7c1dff516b3db5",
         "android_client_info": {
           "package_name": "com.upou.jeano.goguro"
         }
       },
       "oauth_client": [
         {
-          "client_id": "638648271363-8it8e78dhef9l1e5mioh5nkh3dfsssbo.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.upou.jeano.goguro",
-            "certificate_hash": "b912008efc31807ad77aa76d0d7f69149d549947"
-          }
-        },
-        {
-          "client_id": "638648271363-nnb8pegrl5d0d35gcvda6fhtf9jod59u.apps.googleusercontent.com",
+          "client_id": "645170340017-vc8jc2idk3h0qjkr2ua6988c0p04dqid.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDcbRhAq4BjWibLwRHfX-MPsUFq5dSjNlw"
+          "current_key": "AIzaSyBeBV4g3gb8jRtJM40kI1dN64NqBpeMdwE"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "638648271363-nnb8pegrl5d0d35gcvda6fhtf9jod59u.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2

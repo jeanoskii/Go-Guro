@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -33,12 +33,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CustomerSettingsActivity extends AppCompatActivity {
+public class TuteeSettingsActivity extends AppCompatActivity {
 
     private EditText mNameField, mPhoneField;
     private Button mConfirm, mResetPassword;
     private FirebaseAuth mAuth;
-    private DatabaseReference mCustomerDatabase;
+    private DatabaseReference mTuteeDatabase;
     private String userId, mName, mPhone;
     private ImageView mProfileImage;
     private String mProfileImageUrl;
@@ -47,18 +47,18 @@ public class CustomerSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_customer_settings);
+        setContentView(R.layout.activity_tutee_settings);
 
-        mProfileImage = (ImageView) findViewById(R.id.profileImage);
+        mProfileImage = findViewById(R.id.profileImage);
 
-        mNameField = (EditText) findViewById(R.id.name);
-        mPhoneField = (EditText) findViewById(R.id.phone);
+        mNameField = findViewById(R.id.name);
+        mPhoneField = findViewById(R.id.phone);
 
-        mConfirm = (Button) findViewById(R.id.confirm);
-        mResetPassword = (Button) findViewById(R.id.resetPassword);
+        mConfirm = findViewById(R.id.confirm);
+        mResetPassword = findViewById(R.id.resetPassword);
         mAuth = FirebaseAuth.getInstance();
         userId = mAuth.getCurrentUser().getUid();
-        mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userId);
+        mTuteeDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Tutees").child(userId);
 
         getUserInfo();
 
@@ -81,7 +81,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mAuth.sendPasswordResetEmail(mAuth.getCurrentUser().getEmail());
-                Toast.makeText(CustomerSettingsActivity.this, "Please view your email for the password reset instructions.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TuteeSettingsActivity.this, "Please view your email for the password reset instructions.", Toast.LENGTH_SHORT).show();
                 onBackPressed();
             }
         });
@@ -104,12 +104,12 @@ public class CustomerSettingsActivity extends AppCompatActivity {
         mName = mNameField.getText().toString();
         mPhone = mPhoneField.getText().toString();
         if (mName.equals("") || mPhone.equals("")) {
-            Toast.makeText(CustomerSettingsActivity.this, "Please fill out all fields.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(TuteeSettingsActivity.this, "Please fill out all fields.", Toast.LENGTH_SHORT).show();
         } else {
             Map userInfo = new HashMap();
             userInfo.put("name", mName);
             userInfo.put("phone", mPhone);
-            mCustomerDatabase.updateChildren(userInfo);
+            mTuteeDatabase.updateChildren(userInfo);
 
             if (resultUri != null) {
                 StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userId);
@@ -134,9 +134,9 @@ public class CustomerSettingsActivity extends AppCompatActivity {
 
                         Map newImage = new HashMap();
                         newImage.put("profileImageUrl", downloadUrl.toString());
-                        mCustomerDatabase.updateChildren(newImage);
+                        mTuteeDatabase.updateChildren(newImage);
 
-                        Toast.makeText(CustomerSettingsActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TuteeSettingsActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
                         finish();
                         return;
                     }
@@ -144,7 +144,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(CustomerSettingsActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TuteeSettingsActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
                         finish();
                         return;
                     }
@@ -156,7 +156,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
     }
 
     private void getUserInfo() {
-        mCustomerDatabase.addValueEventListener(new ValueEventListener() {
+        mTuteeDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {

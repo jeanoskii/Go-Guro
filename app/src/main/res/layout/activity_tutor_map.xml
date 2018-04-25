@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.upou.jeano.goguro.DriverMapActivity"
+    tools:context="com.upou.jeano.goguro.TutorMapActivity"
     android:fitsSystemWindows="true">
         <fragment
             android:id="@+id/map"
@@ -53,7 +53,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/customerInfo"
+            android:id="@+id/tuteeInfo"
             android:layout_gravity="bottom"
             android:orientation="vertical"
             android:background="@android:color/white"
@@ -66,7 +66,7 @@
                 <ImageView
                     android:layout_width="100sp"
                     android:layout_height="100sp"
-                    android:id="@+id/customerProfileImage"
+                    android:id="@+id/tuteeProfileImage"
                     android:src="@mipmap/ic_default_user"
                     android:padding="20sp"
                     />
@@ -78,28 +78,21 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/customerDestination"
-                        android:paddingBottom="10sp"
-                        android:text="Destination: --"
-                        />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/customerName"
+                        android:id="@+id/tuteeName"
                         android:paddingBottom="10sp"
                         android:paddingTop="20sp"
                         />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/customerPhone"
+                        android:id="@+id/tuteePhone"
                         android:paddingBottom="10sp"
                         android:paddingTop="20sp"
                         />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/customerTopic"
+                        android:id="@+id/tuteeTopic"
                         android:paddingBottom="10sp"
                         android:paddingTop="20sp"
                         />
@@ -131,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:id="@+id/rideStatus"
-                android:text="Pick Up Customer"
+                android:text="Start Study Session"
                 android:visibility="gone"/>
         </LinearLayout>
 </FrameLayout>

@@ -22,9 +22,9 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder implements View.O
     public HistoryViewHolder(View itemView) {
         super(itemView);
         itemView.setOnClickListener(this);
-        rideId = (TextView) itemView.findViewById(R.id.rideId);
-        time = (TextView) itemView.findViewById(R.id.time);
-        name = (TextView) itemView.findViewById(R.id.name);
+        rideId = itemView.findViewById(R.id.rideId);
+        time = itemView.findViewById(R.id.time);
+        name = itemView.findViewById(R.id.name);
     }
 
     @Override

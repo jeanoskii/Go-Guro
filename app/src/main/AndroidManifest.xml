@@ -25,14 +25,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.upou.jeano.goguro.DriverLoginActivity"
+        <activity android:name="com.upou.jeano.goguro.TutorLoginActivity"
             android:theme="@style/AppThemeActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
             <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value="com.upou.jeano.goguro.MainActivity"/>
         </activity>
-        <activity android:name="com.upou.jeano.goguro.CustomerLoginActivity"
+        <activity android:name="com.upou.jeano.goguro.TuteeLoginActivity"
             android:theme="@style/AppThemeActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
             <meta-data
@@ -52,12 +52,12 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.upou.jeano.goguro.DriverMapActivity"
-            android:label="@string/title_activity_driver_map"/>
-        <activity android:name="com.upou.jeano.goguro.CustomerMapActivity"/>
-        <activity android:name="com.upou.jeano.goguro.CustomerSettingsActivity"
+            android:name="com.upou.jeano.goguro.TutorMapActivity"
+            android:label="@string/title_activity_tutor_map"/>
+        <activity android:name="com.upou.jeano.goguro.TuteeMapActivity"/>
+        <activity android:name="com.upou.jeano.goguro.TuteeSettingsActivity"
             android:theme="@style/AppThemeActionBarSettings"/>
-        <activity android:name="com.upou.jeano.goguro.DriverSettingsActivity"
+        <activity android:name="com.upou.jeano.goguro.TutorSettingsActivity"
             android:theme="@style/AppThemeActionBarSettings"/>
         <activity android:name="com.upou.jeano.goguro.HistoryActivity"
             android:theme="@style/AppThemeActionBar"/>
